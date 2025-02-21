@@ -166,12 +166,12 @@ def multiagent(sweep_id, worker_file):
     work_dict = yaml.safe_load(open(worker_file, "r"))
 
     for worker in work_dict["workers"]:
-        ic(worker)
         if worker['worker'] == "local":
             for _ in range(worker['number']):
-                run(f"{worker['directory']}/scripts/rcp_wandb_helper.sh {worker['directory']} {worker['subdirectory']} {sweep_id}",
-                    capture_output=False,
-                    )
+                agent(sweep_id)
+                # run(f"{worker['directory']}/scripts/rcp_wandb_helper.sh {worker['directory']} {worker['subdirectory']} {sweep_id}",
+                #     capture_output=False,
+                #     )
 
 @cli.command()
 @click.option("--entity", default="rcpaffenroth-wpi", help="The entity to use.")
