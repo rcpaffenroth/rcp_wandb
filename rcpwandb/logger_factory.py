@@ -1,14 +1,13 @@
-import torch
-import pathlib
-import os
 from loguru import logger as logging
 from icecream import ic
 import sys
 
 # This should be the only place in the code where this import happen
 import wandb
-# The wandb setup for stable baselines
-from wandb.integration.sb3 import WandbCallback
+
+# We need to be careful about imports and this is a lib
+# that helps with that.
+import importlib
 
 # This is a little trick to make ic work with logging.  This is useful
 # since ic has nice formatting.
@@ -106,18 +105,33 @@ class LoggerFacade:
         if self._logger_type == 'wandb':
             wandb.finish()
 
-    def save_model(self, model, save_model_name='model'):
+    def save_model(self, model_path, model_name):
         if self._logger_type == 'wandb':
-            path = pathlib.Path(wandb.run.dir) / save_model_name
+            # path = pathlib.Path(wandb.run.dir) / save_model_name
             # Save the model to wandb
-            torch.save(model.state_dict(), path)
+            # torch.save(model.state_dict(), path)
             # Save as artifact for version control.
-            artifact = wandb.Artifact('model', type='model')
-            artifact.add_file(path)
+            artifact = wandb.Artifact(model_name, type='model')
+            artifact.add_file(model_path)
             wandb.log_artifact(artifact)
         else:
             self.console_logger.warning(f"save_model not implemented for logger type {self._logger_type}") 
 
+    def get_sb3_wandb_callback(self):
+        """Get the Stable Baselines3 WandbCallback
+            This bears some explanation.  The WandbCallback is a callback
+            that can be used with the Stable Baselines3 library.  It logs
+            the metrics from the training to wandb.  This is useful for
+            tracking the progress of the training.  However, to include it 
+            requires many heavy dependencies.  This function is a way to
+            include the WandbCallback without including the dependencies here.
+        """
+        try:
+            sb3_import = importlib.import_module('wandb.integration.sb3')
+        except ImportError:
+            self.console_logger.warning("wandb.integration.sb3 not available")
+            return None
+        return sb3_import.WandbCallback
 
 def LoggerFactory(type='console', console_level='info',
                   project=None, entity=None, name=None,
@@ -169,7 +183,6 @@ def LoggerFactoryFromConfig(cfg=None, model=None, default_root_dir=None):
         if model:
             wandb.watch(model, log_graph=False, log_freq=100)
         logger = LoggerFacade(wandb, 'wandb', cfg['console_level'])
-        logger.WandbCallback = WandbCallback
     elif cfg['type'] == 'console':
         logger = LoggerFacade(None, 'console', cfg['console_level'])
     else:
@@ -178,58 +191,3 @@ def LoggerFactoryFromConfig(cfg=None, model=None, default_root_dir=None):
     logger.console_logger.info(f"All logging it going to {default_root_dir}")
     return logger
 
-def demo():
-    import numpy as np
-    import pandas as pd
-    import plotly.express as px
-
-    # Initialize the logger
-    logger = LoggerFactory(type='wandb', console_level='info', project='test', name='demo')
-
-    # Log hyperparameters
-    hyperparams = {'learning_rate': 0.001, 'batch_size': 32}
-    logger.log_hyperparams(hyperparams)
-
-    # Log metrics
-    for i in range(10):
-        metrics = {'accuracy': np.cos(0.9*i), 'loss': 0.1*i}
-        logger.log_metrics(metrics, step=i)
-        logger.log_metric('single metric', np.sin(0.9*i), step=i)    
-
-    # Log an image
-    data = np.random.rand(100, 100)
-    logger.log_image('random_image', data)
-
-    # Log a plot
-    fig = px.scatter(x=np.random.rand(100), y=np.random.rand(100))
-    logger.log_plot('scatter_plot', fig)
-
-    # Log a 3d plot!
-    df = px.data.iris()
-    fig = px.scatter_3d(df, x='sepal_length', y='sepal_width', z='petal_width',
-              color='species')
-    logger.log_plot('iris', fig)
-
-    # Create a sample dataframe with an image
-    data = np.random.rand(100, 100)
-    bw_image = logger.make_image(data)
-    data = np.random.rand(100, 100, 3)
-    color_image = logger.make_image(data)
-
-    data = {
-        'id': [1, 2],
-        'bw_image': [bw_image, bw_image],
-        'color_image': [color_image, color_image]
-    }
-    df = pd.DataFrame(data)
-    logger.log_dataframe('sample_table', df)
-
-    # Save a model
-    model = torch.nn.Linear(10, 1)
-    logger.save_model(model, 'dummy_model')
-
-    # Finalize the logger
-    logger.finalize()
-
-if __name__ == "__main__":
-    demo()

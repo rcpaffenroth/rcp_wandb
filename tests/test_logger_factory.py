@@ -1,4 +1,4 @@
-from rcp_wandb.logger_factory import LoggerFactory, LoggerFactoryFromConfig
+from rcpwandb.logger_factory import LoggerFactory, LoggerFactoryFromConfig
 import os
 import pandas as pd
 

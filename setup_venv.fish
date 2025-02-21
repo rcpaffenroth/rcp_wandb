@@ -14,5 +14,4 @@ python3 -m venv venv
 # Active the environment so this is my default python
 . ./venv/bin/activate.fish
 
-pip install --upgrade pip
-pip install --editable .
+poetry install --with dev

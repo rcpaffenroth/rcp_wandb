@@ -7,12 +7,13 @@ readme = "README.md"
 packages = [{include = "rcpwandb"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 click = "8.1.*"
 wandb = "0.19.*"
 icecream = "2.1.*"
 pyyaml = "6.0.*"
 pandas = "2.2.*"
+loguru = "0.7.*"
 
 [tool.poetry.group.dev]
 optional = true
@@ -20,6 +21,15 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.*"
 pylint = "3.3.*"
+
+[tool.poetry.group.demo]
+optional = true
+
+[tool.poetry.group.demo.dependencies]
+numpy = "*"
+pandas = "*"
+plotly = "*"
+torch = "^2.0.0"
 
 [tool.poetry.scripts]
 rcp_wandb = 'rcpwandb.cli:cli'
