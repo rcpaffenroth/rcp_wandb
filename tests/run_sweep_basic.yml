@@ -1,29 +1,20 @@
 method: grid
-program: print_arg.py 
+program: print_arg_basic.py 
 project: test
 entity: rcpaffenroth-wpi
 # stuff for doing my parallel runs
 workers:
   - worker: local
     # directory: /home/rcpaffenroth/projects/0_core/rcp_wandb/tests
-    number: 8
-  # - worker: slurm
-  #   directory: /home/rcpaffenroth/projects/2_research/inn_survey
-  #   number: 1
+    number: 2
 parameters:
   sweep_id:
-    # values: [1]
-    values: [1, 2, 3]
+    values: [1]
   data_name:
     values:
       - MNIST1D
       - EMlocalization
-      - LunarLander
-      - MassSpec
-      - MNIST
   model_yaml:
     values:
       - "model_yaml/Variable_Sparsity0.yml"
       - "model_yaml/Variable_Sparsity1.yml"
-      - "model_yaml/Variable_Sparsity2.yml"
-      - "model_yaml/Variable_Sparsity3.yml"

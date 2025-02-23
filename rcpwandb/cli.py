@@ -96,12 +96,14 @@ def agent(sweep_id):
     """
     # Perform sanity checks to ensure everything is ok
     sanity_checks()
-
-    log = f"log_{uuid.uuid4()}.txt"
     if sweep_id == "":
         sweep_id = sys.stdin.read().strip()
-    run(f"wandb agent {sweep_id} > {log} 2>&1 &", capture_output=False)
+    _agent(sweep_id)
 
+def _agent(sweep_id):
+    log = f"log_{uuid.uuid4()}.txt"
+    ic(sweep_id, log)
+    run(f"wandb agent {sweep_id} > {log} 2>&1 &", capture_output=False)
 
 @cli.command()
 @click.argument("path")
@@ -151,8 +153,8 @@ def multiagent(sweep_id, worker_file):
     # Perform sanity checks to ensure everything is ok
     sanity_checks()
 
-    if sweep_id == "":
-        sweep_id = sys.stdin.read().strip()
+    # if sweep_id == "":
+    #     sweep_id = sys.stdin.read().strip()
 
     # Look for a yaml file with the worker configuration such as
     # workers:
@@ -164,14 +166,15 @@ def multiagent(sweep_id, worker_file):
     #     branch: main
 
     work_dict = yaml.safe_load(open(worker_file, "r"))
+    if sweep_id == "":
+        sweep_id = sys.stdin.read().strip()
 
+    ic(work_dict)
     for worker in work_dict["workers"]:
+        ic(worker)
         if worker['worker'] == "local":
-            for _ in range(worker['number']):
-                agent(sweep_id)
-                # run(f"{worker['directory']}/scripts/rcp_wandb_helper.sh {worker['directory']} {worker['subdirectory']} {sweep_id}",
-                #     capture_output=False,
-                #     )
+            for i in range(worker['number']):
+                _agent(sweep_id)
 
 @cli.command()
 @click.option("--entity", default="rcpaffenroth-wpi", help="The entity to use.")
