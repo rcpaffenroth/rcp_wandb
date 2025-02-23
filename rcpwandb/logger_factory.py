@@ -141,6 +141,10 @@ def LoggerFactory(type='console', console_level='info',
 
 def LoggerFactoryFromConfig(cfg=None, model=None, default_root_dir=None):
     global logger
+    if logger is not None:
+        logger.console_logger.warning("Logger already created")1
+        return logger
+
     if cfg is None:
         cfg = {}
         cfg['type'] = 'console'

@@ -89,7 +89,8 @@ def sweep(sweep_file):
 
 @cli.command()
 @click.argument("sweep_id", default="")
-def agent(sweep_id):
+@click.option("--quiet", "-q", default=False, is_flag=True, help="Run in quiet mode.")
+def agent(sweep_id, quiet):
     """Run a sweep locally using the specified sweep file.
     This does the same thing at the `wandb agent` command, but is chainable using stdout.
     Also, by default, it runs in the background and silently logs to a file.
@@ -98,12 +99,15 @@ def agent(sweep_id):
     sanity_checks()
     if sweep_id == "":
         sweep_id = sys.stdin.read().strip()
-    _agent(sweep_id)
+    _agent(sweep_id, quiet)
 
-def _agent(sweep_id):
-    log = f"log_{uuid.uuid4()}.txt"
-    ic(sweep_id, log)
-    run(f"wandb agent {sweep_id} > {log} 2>&1 &", capture_output=False)
+def _agent(sweep_id, quiet=False):
+    if quiet:
+        run(f"wandb agent {sweep_id} > /dev/null 2>&1 &", capture_output=False)
+    else:
+        log = f"log_{uuid.uuid4()}.txt"
+        ic(sweep_id, log)
+        run(f"wandb agent {sweep_id} > {log} 2>&1 &", capture_output=False)
 
 @cli.command()
 @click.argument("path")
@@ -145,7 +149,9 @@ def deleteruns(path, yes):
     type=click.Path(),
     default="run_sweep.yml",
     help="The yaml file with the worker configuration.")
-def multiagent(sweep_id, worker_file):
+@click.option("--quiet", "-q", default=False, is_flag=True, help="Run in quiet mode.")
+
+def multiagent(sweep_id, worker_file, quiet):
     """Run a sweep locally using the specified sweep file.
     This does the same thing at the `wandb agent` command, but is chainable using stdout.
     Also, by default, it runs in the background and silently logs to a file.
@@ -153,28 +159,14 @@ def multiagent(sweep_id, worker_file):
     # Perform sanity checks to ensure everything is ok
     sanity_checks()
 
-    # if sweep_id == "":
-    #     sweep_id = sys.stdin.read().strip()
-
-    # Look for a yaml file with the worker configuration such as
-    # workers:
-    #   - host: beelink1
-    #     directory: /home/rcpaffenroth/projects/2_research/inn_survey
-    #     branch: main
-    #   - host: beelink2
-    #     directory: /home/rcpaffenroth/projects/2_research/inn_survey
-    #     branch: main
-
     work_dict = yaml.safe_load(open(worker_file, "r"))
     if sweep_id == "":
         sweep_id = sys.stdin.read().strip()
 
-    ic(work_dict)
     for worker in work_dict["workers"]:
-        ic(worker)
         if worker['worker'] == "local":
             for i in range(worker['number']):
-                _agent(sweep_id)
+                _agent(sweep_id, quiet)
 
 @cli.command()
 @click.option("--entity", default="rcpaffenroth-wpi", help="The entity to use.")
