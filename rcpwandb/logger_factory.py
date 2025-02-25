@@ -1,4 +1,4 @@
-from loguru import logger as logging
+import logging
 from icecream import ic
 import sys
 
@@ -34,11 +34,11 @@ class LoggerFacade:
         # process.  For example, this happens when the logger is run
         # through Dask.
         if console_level == 'debug':
-            logging.add(sink=sys.stdout, level='DEBUG')
+            logging.basicConfig(level=logging.DEBUG)
         elif console_level == 'info':
-            logging.add(sink=sys.stdout, level='INFO')
+            logging.basicConfig(level=logging.INFO)
         elif console_level == 'error':
-            logging.add(sink=sys.stdout, level='ERROR')
+            logging.basicConfig(level=logging.ERROR)
         else:
             assert False, f"Unknown console level {console_level}"    
         self.console_logger.info(f"logger_type {self._logger_type}")
@@ -142,8 +142,7 @@ def LoggerFactory(type='console', console_level='info',
 def LoggerFactoryFromConfig(cfg=None, model=None, default_root_dir=None):
     global logger
     if logger is not None:
-        logger.console_logger.warning("Logger already created")
-        return logger
+        logger.console_logger.warning("Logger already created, recreating")
 
     if cfg is None:
         cfg = {}
@@ -192,6 +191,5 @@ def LoggerFactoryFromConfig(cfg=None, model=None, default_root_dir=None):
     else:
         raise ValueError(f"Unknown logger type: {cfg['type']}")
     
-    logger.console_logger.info(f"All logging it going to {default_root_dir}")
     return logger
 
