@@ -142,7 +142,7 @@ def LoggerFactory(type='console', console_level='info',
 def LoggerFactoryFromConfig(cfg=None, model=None, default_root_dir=None):
     global logger
     if logger is not None:
-        logger.console_logger.warning("Logger already created")1
+        logger.console_logger.warning("Logger already created")
         return logger
 
     if cfg is None:
