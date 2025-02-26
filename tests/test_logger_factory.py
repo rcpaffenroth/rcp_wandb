@@ -1,62 +1,62 @@
-from rcpwandb.logger_factory import LoggerFactory, LoggerFactoryFromConfig
+from rcpwandb.tracker_factory import TrackerFactory, TrackerFactoryFromConfig
 import os
 import pandas as pd
 
-def test_logger_factory_console():
-    logger = LoggerFactory(type='console', console_level='info')
-    assert logger is not None
-    assert logger._logger_type == 'console'
+def test_tracker_factory_console():
+    tracker = TrackerFactory(type='console', console_level='info')
+    assert tracker is not None
+    assert tracker._tracker_type == 'console'
 
-def test_logger_factory_wandb():
+def test_tracker_factory_wandb():
     os.environ['WANDB_MODE'] = 'disabled'
-    logger = LoggerFactory(type='wandb', console_level='info', 
+    tracker = TrackerFactory(type='wandb', console_level='info', 
                            project='test_project', entity='test_entity', name='test_name')
-    assert logger is not None
-    assert logger._logger_type == 'wandb'
+    assert tracker is not None
+    assert tracker._tracker_type == 'wandb'
 
-def test_logger_factory_from_config_console():
+def test_tracker_factory_from_config_console():
     cfg = {'type': 'console', 'console_level': 'info'}
-    logger = LoggerFactoryFromConfig(cfg)
-    assert logger is not None
-    assert logger._logger_type == 'console'
+    tracker = TrackerFactoryFromConfig(cfg)
+    assert tracker is not None
+    assert tracker._tracker_type == 'console'
 
-def test_logger_factory_from_config_wandb():
+def test_tracker_factory_from_config_wandb():
     os.environ['WANDB_MODE'] = 'disabled'
     cfg = {'type': 'wandb', 'console_level': 'info', 
            'project': 'test_project', 'entity': 'test_entity', 'name': 'test_name'}
-    logger = LoggerFactoryFromConfig(cfg)
-    assert logger is not None
-    assert logger._logger_type == 'wandb'
+    tracker = TrackerFactoryFromConfig(cfg)
+    assert tracker is not None
+    assert tracker._tracker_type == 'wandb'
 
-def test_logger_factory_log_hyperparams():
+def test_tracker_factory_log_hyperparams():
     os.environ['WANDB_MODE'] = 'offline'
-    logger = LoggerFactory(type='wandb', 
+    tracker = TrackerFactory(type='wandb', 
                            console_level='info',
                            project='test')
-    logger.log_hyperparams({'a': 1, 'b': 2})
-    logger.finalize()
+    tracker.log_hyperparams({'a': 1, 'b': 2})
+    tracker.finalize()
 
-def test_logger_factory_log_metric():
+def test_tracker_factory_log_metric():
     os.environ['WANDB_MODE'] = 'offline'
-    logger = LoggerFactory(type='wandb', 
+    tracker = TrackerFactory(type='wandb', 
                            console_level='info',
                            project='test')
-    logger.log_metric('a', 1.0, 1)
-    logger.finalize()
+    tracker.log_metric('a', 1.0, 1)
+    tracker.finalize()
 
-def test_logger_factory_log_metrics():
+def test_tracker_factory_log_metrics():
     os.environ['WANDB_MODE'] = 'offline'
-    logger = LoggerFactory(type='wandb', 
+    tracker = TrackerFactory(type='wandb', 
                            console_level='info',
                            project='test')
-    logger.log_metrics({'a': 1.0, 'b': 2.0}, 1)
-    logger.finalize()
+    tracker.log_metrics({'a': 1.0, 'b': 2.0}, 1)
+    tracker.finalize()
 
-def test_logger_factory_log_dataframe():
+def test_tracker_factory_log_dataframe():
     os.environ['WANDB_MODE'] = 'offline'
-    logger = LoggerFactory(type='wandb', 
+    tracker = TrackerFactory(type='wandb', 
                            console_level='info',
                            project='test')
     df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
-    logger.log_dataframe('name', df)
-    logger.finalize()
+    tracker.log_dataframe('name', df)
+    tracker.finalize()

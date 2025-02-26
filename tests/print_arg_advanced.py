@@ -1,5 +1,5 @@
 import sys
-from rcpwandb.logger_factory import LoggerFactory
+from rcpwandb.tracker_factory import LoggerFactory
 
 logger = LoggerFactory(type='wandb', 
                        console_level='info', 

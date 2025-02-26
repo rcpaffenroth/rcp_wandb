@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import torch
-from rcpwandb.logger_factory import LoggerFactory
+from rcpwandb.tracker_factory import LoggerFactory
 
 def demo():
     # Initialize the logger
