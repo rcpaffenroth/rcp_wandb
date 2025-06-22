@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "rcpwandb"}]
 
 [tool.poetry.dependencies]
-python = "3.10.*"
+python = "^3.10"
 click = "8.1.*"
 wandb = "0.19.*"
 icecream = "2.1.*"
