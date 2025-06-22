@@ -6,7 +6,7 @@ from rcpwandb.tracker_factory import TrackerFactory
 
 def demo():
     # Initialize the tracker
-    tracker = trackerFactory(type='wandb', console_level='info', project='test', name='demo')
+    tracker = TrackerFactory(type='wandb', console_level='info', project='test', name='demo')
 
     # Log hyperparameters
     hyperparams = {'learning_rate': 0.001, 'batch_size': 32}

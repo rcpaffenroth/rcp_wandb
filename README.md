@@ -5,6 +5,7 @@ RCPs extensions to Weights and Biases
 
 For example, to do a local sweep and then clean up the runs
 ```bash
+cd scripts
 wandb sweep run_sweep.yml 
 wandb agent COPIED_FROM_ABOVE
 ./rcp_wandb sweep run_sweep.yml | ./rcp_wandb agent
@@ -16,19 +17,23 @@ wandb agent COPIED_FROM_ABOVE
 ## Tests
 
 ```bash
+cd scripts
 wandb sweep run_sweep_basic.yml 
 wandb agent COPIED_FROM_ABOVE
 rcp_wandb deleteruns rcpaffenroth-wpi/test
 ```
 
 ```bash
+cd scripts
 rcp_wandb sweep run_sweep_basic.yml | rcp_wandb agent && rcp_wandb deleteruns -y rcpaffenroth-wpi/test
 ```
 
 ```bash
+cd scripts
 rcp_wandb sweep run_sweep_advanced.yml | rcp_wandb agent && rcp_wandb deleteruns -y rcpaffenroth-wpi/test
 ```
 
 ```bash
+cd scripts
 rcp_wandb sweep run_sweep_advanced.yml | rcp_wandb multiagent -w run_sweep_advanced.yml && rcp_wandb deleteruns -y rcpaffenroth-wpi/test
 ```
