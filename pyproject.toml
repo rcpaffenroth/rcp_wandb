@@ -27,7 +27,7 @@ optional = true
 
 [tool.poetry.group.demo.dependencies]
 numpy = "2.2.*"
-pandas = "2.2*"
+pandas = "2.2.*"
 plotly = "6.0.*"
 torch = "2.6.*"
 pillow = "11.2.*"
