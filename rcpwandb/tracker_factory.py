@@ -8,16 +8,19 @@ import wandb
 # that helps with that.
 import importlib
 
-# This is a little trick to make ic work with logging.  This is useful
-# since ic has nice formatting.
-def info(s):
-    """Debug function that works with ic
+# NOTE: The code below is a bad idea. It changes what ic does on a global level.
+# so, if you do this, then you can't use ic in the rest of the code unless you also
+# do logging.
+# # This is a little trick to make ic work with logging.  This is useful
+# # since ic has nice formatting.
+# def info(s):
+#     """Debug function that works with ic
 
-    Args:
-        s (str): The thing to log
-    """
-    logging.info(s)
-ic.configureOutput(outputFunction=info)
+#     Args:
+#         s (str): The thing to log
+#     """
+#     logging.info(s)
+# ic.configureOutput(outputFunction=info)
 
 # The global tracker object
 tracker = None
