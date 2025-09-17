@@ -215,7 +215,7 @@ def export(entity, project, output, verbose):
         # .name is the human-readable name of the run.
         run_list[-1]['name'] = run.name
         if verbose:
-            ic(run.name, run.id, run.state, run.created_at, run.updated_at)
+            ic(run.name, run.id, run.state)
 
     runs_df = pd.DataFrame(run_list)
     runs_df.to_csv(output)
