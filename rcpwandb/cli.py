@@ -171,6 +171,14 @@ def multiagent(sweep_id, worker_file, quiet):
 @cli.command()
 @click.option("--entity", default="rcpaffenroth-wpi", help="The entity to use.")
 @click.option("--project", default="inn-survey-test", help="The project to use.")
+# Add a flag to determine if the output is verbose or not
+@click.option(
+    "-v",
+    "--verbose",
+    default=False,
+    is_flag=True,
+    help="Enable verbose output."
+)
 @click.option(
     "-o",
     "--output",
@@ -178,7 +186,7 @@ def multiagent(sweep_id, worker_file, quiet):
     default="project.csv",
     help="The output file to save the data to.",
 )
-def export(entity, project, output):
+def export(entity, project, output, verbose):
     """
     Export the summary, configuration, and name of all runs in a given Weights & Biases project to a CSV file.
 
@@ -206,6 +214,8 @@ def export(entity, project, output):
 
         # .name is the human-readable name of the run.
         run_list[-1]['name'] = run.name
+        if verbose:
+            ic(run.name, run.id, run.state, run.created_at, run.updated_at)
 
     runs_df = pd.DataFrame(run_list)
     runs_df.to_csv(output)
