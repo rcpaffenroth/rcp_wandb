@@ -199,7 +199,7 @@ def export(entity, project, output, verbose):
     """
 
     api = wandb.Api()
-    runs = api.runs(entity + "/" + project)
+    runs = api.runs(entity + "/" + project, per_page=1000)
 
     run_list = []
     for run in runs:
